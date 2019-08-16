@@ -11,7 +11,7 @@
 
 // Define API credentials
 
-#define TYRENS_API_ENDPOINT  "https://codesapp.tyrens.se"
+#define TYRENS_API_ENDPOINT  ""
 #define TYRENS_API_AUTH_TOKEN ""
 
 using json = nlohmann::json;
