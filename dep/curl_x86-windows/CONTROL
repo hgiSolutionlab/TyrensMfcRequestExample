@@ -1,0 +1,19 @@
+Package: curl
+Version: 7.65.2-1
+Depends: zlib
+Architecture: x86-windows
+Multi-Arch: same
+Description: A library for transferring data with URLs
+
+Package: curl
+Feature: ssl
+Depends: curl[winssl]
+Architecture: x86-windows
+Multi-Arch: same
+Description: Default SSL backend
+
+Package: curl
+Feature: winssl
+Architecture: x86-windows
+Multi-Arch: same
+Description: SSL support (Secure Channel / "WinSSL")

@@ -1,0 +1,95 @@
+#include "ApiWrapper.h"
+#include "pch.h"
+
+ApiWrapper::ApiWrapper(const std::string& endpoint, const std::string& token) : endpoint(endpoint), token(token) {
+
+	if (endpoint.empty()) {
+		throw std::invalid_argument(std::string("endpoint"));
+	}
+
+	if (token.empty()) {
+		throw std::invalid_argument(std::string("token"));
+	}
+
+	try {
+		curl = curl_easy_init();
+
+		if (!curl) {
+			throw api_exception::init_error(std::string(curl_easy_strerror(CURLE_FAILED_INIT)));
+		}
+
+		const std::string authHeader = "Authorization: Bearer " + token;
+		headers = curl_slist_append(headers, authHeader.c_str());
+
+		if (!headers) {
+			throw api_exception::init_error(std::string("Failed to add auth header"));
+		}
+	}
+	catch (api_exception::init_error& e) {
+		freeMemory();
+		throw e;
+	}
+	catch (...) {
+		throw;
+	}
+
+};
+
+ApiWrapper::~ApiWrapper() {
+	freeMemory();
+}
+
+void ApiWrapper::freeMemory() {
+
+	if (curl) {
+		curl_easy_cleanup(curl);
+	}
+
+	if (headers) {
+		curl_slist_free_all(headers);
+	}
+}
+
+std::shared_ptr<std::string> ApiWrapper::request(const std::string& url = "") {
+
+	auto resBuffer = std::make_shared<std::string>();
+	std::cout << endpoint << std::endl;
+	std::cout << url << std::endl;
+	const std::string requestUrl = endpoint + url;
+	curl_easy_setopt(curl, CURLOPT_URL, requestUrl.c_str());
+	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, appendToStringBuffer);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, resBuffer);
+
+	CURLcode res;
+	res = curl_easy_perform(curl);
+
+	if (res != CURLE_OK) {
+		throw api_exception::req_error(std::string(curl_easy_strerror(res)));
+	}
+
+	long responseCode;
+	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &responseCode);
+
+	if (responseCode != 200) {
+		throw api_exception::req_error(std::string("Code: " + std::to_string(responseCode)));
+	}
+
+	return resBuffer;
+}
+
+size_t ApiWrapper::appendToStringBuffer(char* in, size_t size, size_t nmemb, std::string* out) {
+
+	// Writing response into string
+
+	std::size_t total_size = size * nmemb;
+
+	if (total_size) {
+		out->append(in, total_size);
+	}
+
+	return total_size;
+};
+
+api_exception::init_error::init_error(std::string& msg) : std::runtime_error(msg) {};
+api_exception::req_error::req_error(std::string& msg) : std::runtime_error("Request failed" + msg) {};
