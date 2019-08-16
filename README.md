@@ -1,6 +1,8 @@
 <h1>Example request to Tyrens API in C++</h1>
 
-<h2>External libraries used:</h2>
-<a>https://curl.haxx.se/libcurl/c/</a>
+<b>External libraries used:</b>
 <br>
-<a>https://github.com/nlohmann/json</a>
+[Curl](https://curl.haxx.se/libcurl/c)
+<br>
+[JSON](https://github.com/nlohmann/json)
+<br>
