@@ -227,15 +227,14 @@ void CmfcRequestDlg::OnBnClickedButton1()
 	projects.reserve(resJsonSize);
 
 	for (auto item : resJson) {
-		auto project = item.get<Models::Project>();
-		projects.push_back(project);
+		projects.emplace_back(item.get<Models::Project>());
 	}
 
 	// Adding project names to list box
 
 	std::for_each(projects.begin(), projects.end(), [&](const Models::Project& p) {
 		projectsListBox.AddString(CString(p.name.c_str()));
-		});
+	});
 }
 
 
