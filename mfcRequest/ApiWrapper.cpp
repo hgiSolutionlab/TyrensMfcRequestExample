@@ -53,8 +53,6 @@ void ApiWrapper::freeMemory() {
 std::shared_ptr<std::string> ApiWrapper::request(const std::string& url = "") {
 
 	auto resBuffer = std::make_shared<std::string>();
-	std::cout << endpoint << std::endl;
-	std::cout << url << std::endl;
 	const std::string requestUrl = endpoint + url;
 	curl_easy_setopt(curl, CURLOPT_URL, requestUrl.c_str());
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
