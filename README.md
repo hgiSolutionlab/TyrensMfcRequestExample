@@ -7,4 +7,4 @@
 [JSON](https://github.com/nlohmann/json)
 <br>
 
-Set authentication token in "mfcRequestDlg.cpp" file & run application in x86 mode
+Set authentication credentials in "mfcRequestDlg.cpp" file & run application in x86 mode
